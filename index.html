@@ -1,0 +1,117 @@
+<html>
+    <head>
+        <title>Skład dla zwierzaków :: Vue.js</title>
+        <script src="https://unpkg.com/vue"></script>
+        <link rel="stylesheet" type="text/css" href="assets/css/app.css"/>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        </head>
+        <body>
+            <div id="app">
+                <header>
+                    <h1 v-text="sitename"></h1>   
+                    <main>
+                        <div class="row product">
+                            <div class="col">
+                                <figure>
+                                    <img v-bind:src="product.image">
+                                </figure>
+                            </div>
+                            <div class="col col-expand">
+                                <h1 v-text="product.title"></h1>
+                                <p v-html="product.description"></p>
+                            <p class="price">
+                                {{ product.price | formatPrice }}
+                            </p>
+                            <button class="default btn btn-primary" v-on:click="addToCart">Dodaj do koszyka</button>
+                        </div>
+                        </div>
+                        </main>                
+                </header>
+            </div>
+
+            <script type="text/javascript">
+            var APP_LOG_LIFECYCLE_EVENTS =true;
+                var webstore = new Vue({
+                    el: '#app',
+                    data: {
+                        sitename: 'Skład dla zwierzaków::Vue.js',
+                        product: {
+                            id: 1001,
+                            title: "Karma dla kota 10 kg",
+                            description: "10-kilogramowe opakowanie pysznej karmy organicznej, której żaden kot się nie <em>oprze</em>!",
+                            price: 6700,
+                            image: 'assets/images/product-fullsize.png'
+                        },
+                        cart: []
+                    },
+                    filters: {
+                        formatPrice: function(price) {
+                            if(!parseInt(price)){
+                                return "";
+                            }
+                            if(price > 99999) {
+                                var priceString = (price / 100).toFixed(2).replace('.',',');
+                                var priceArray = priceString.split("").reverse();
+                                var index = 3;
+                                while(priceArray.length > index + 3){
+                                    priceArray.splice(index + 3, 0, " ");
+                                    index += 4;
+                                }
+                                return priceArray.reverse().join("") + " zł";
+                            }else{
+                                return (price / 100).toFixed(2).replace('.',',') + " zł";
+                            }
+                        }
+                    },
+                    methods: {
+                        addToCart: function() {
+                            this.cart.push(this.product.id);
+                        }
+                    },
+                    beforeCreate: function() {
+                        if(APP_LOG_LIFECYCLE_EVENTS) {
+                            console.log("berforeCreate");
+                        }
+                    },
+                    created: function() {
+                        if (APP_LOG_LIFECYCLE_EVENTS) {
+                            console.log("created");
+                        }
+                    },
+                        beforeMount: function() {
+                        if (APP_LOG_LIFECYCLE_EVENTS) {
+                            console.log("beforeMount");
+                        }
+                    },
+                    mounted: function() {
+                        if (APP_LOG_LIFECYCLE_EVENTS) {
+                            console.log("mounted");
+                        }
+                    },
+                    beforeUpdate: function() {
+                        if (APP_LOG_LIFECYCLE_EVENTS) {
+                            console.log("beforeUpdate");
+                        }
+                    },
+                    updated: function() {
+                        if (APP_LOG_LIFECYCLE_EVENTS) {
+                            console.log("updated");
+                        }
+                    },
+                    beforeDestroy: function() {
+                        if (APP_LOG_LIFECYCLE_EVENTS) {
+                            console.log("beforeDestroy ");
+                        }
+                    },
+                    destroyed: function() {
+                        if (APP_LOG_LIFECYCLE_EVENTS) {
+                            console.log("destroyed");
+                        }
+                    }
+                });   
+
+                
+                </script>
+
+        </body>
+</html>
