@@ -1,19 +1,24 @@
-<html>
+<!DOCTYPE html>
+<html lang="pl">
     <head>
+        <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Skład dla zwierzaków :: Vue.js</title>
-        <script src="https://unpkg.com/vue"></script>
+        <script src="https://unpkg.com/vue"></script> 
         
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-        <link rel="stylesheet" type="text/css" href="assets/css/app.css"/>
+        
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" 
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">        
         <script src="https://kit.fontawesome.com/8696c3fad3.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" type="text/css" href="assets/css/app.css"/>
     </head>
     <body>
-        <div id="app">
+        <div class="container" id="app">
                 <header>
                     <div class="navbar navbar-default">
                         <h1 v-text="sitename"></h1>
                     </div>
-                    <div class="nav  justify-content-end">
+                    <div class="nav justify-content-end">
                         <button type="button" class="btn btn-default btn-lg" v-on:click="showCheckout">
                         <i class="fas fa-cart-arrow-down shoppingCart"> <span class="cartItemCount">{{ cartItemCount }}</span></i>
                         <p>Do kasy</p>                      
@@ -21,27 +26,101 @@
                     </button>
                     </div>
                 </header>                      
-                <main>
-                    <div class="row product">
-                        <div class="col">
-                            <figure>
-                                <img v-bind:src="product.image">
-                            </figure>
+                <main>                                                                  
+                        <div class="row product" v-if="showProduct">
+                            <div class="col">
+                                <figure>
+                                    <img v-bind:src="product.image">
+                                </figure>
+                            </div>
+                            <div class="col col-expand">
+                                <h1 v-text="product.title"></h1>
+                                <p v-html="product.description"></p>
+                                <p class="price">
+                                    {{ product.price | formatPrice }}
+                                </p>
+                                <button class="default btn btn-primary" v-on:click="addToCart" v-if="canAddToCart">Dodaj do koszyka</button> 
+                                <div v-else>
+                                <button class="disabled">Dodaj do koszyka</button> 
+                                <p class="text-danger font-italic">stan magazynowy wyczerpany</p>
+                                </div>
+                            </div>                
                         </div>
-                        <div class="col col-expand">
-                            <h1 v-text="product.title"></h1>
-                            <p v-html="product.description"></p>
-                            <p class="price">
-                                {{ product.price | formatPrice }}
-                            </p>
-                            <button class="default btn btn-primary" v-on:click="addToCart" v-if="canAddToCart">Dodaj do koszyka</button> 
-                            <div v-else>
-                            <button class="disabled">Dodaj do koszyka</button> 
-                            <p class="text-danger font-italic">stan magazynowy wyczerpany</p>
-                        </div>
-                                                   
-                        </div>
-                    </div>
+                        <div v-else>
+                            <div class="col-md-6">
+                                <strong>Imię:</strong>
+                                <input v-model="order.firstName" class="form-control"/>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Nazwisko:</strong>
+                                <input v-model="order.lastName" class="form-control"/>
+                            </div>                            
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <strong>Adres:</strong>
+                                </div>
+                                <div class="col-md-12">
+                                    <input v-model="order.address" class="form-control" />
+                                </div>
+                            </>
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <strong>Miejscowość:</strong>
+                                </div>
+                                <div class="col-md-12">
+                                    <input v-model="order.city" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-2">
+                                    <strong>Województwo:</strong>
+                                    <select v-model="order.state" class="form-control">
+                                        <option disabled value="">Województwo</option>
+                                        <option>DL</option>
+                                        <option>KP</option>
+                                        <option>LB</option>
+                                        <option>LU</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-6 col-md-offset-4">
+                                    <strong>Kod pocztowy:</strong>
+                                    <input v-model="order.zip" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-6 boxes">
+                                    <input type="checkbox" id="gift" value="true" v-model="order.gift">
+                                    <label for="gift">Wysłać jako prezent?</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-6 boxes">
+                                    <input type="radio" id="home" value="domowy" v-model="order.method">
+                                    <label for="home">Domowy</label>
+                                    <input type="radio" id="business" value="firmowy" v-model="order.method">
+                                    <label for="business">Firmowy</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-6">
+                                    <button type="submit" class="btn btn-primary submit" v-on:click="submitForm">Złóż zamówienie</button>
+                                </div>
+                            </div>
+                            <div class="col-md-12 verify">
+                                <pre>
+                                    Imie: {{ order.firstName }}
+                                    Nazwisko: {{ order.lastName }}
+                                    Adres: {{order.address}}
+                                    Miejscowość: {{order.city}}
+                                    Kod pocztowy: {{order.zip}}
+                                    Województwo: {{order.state}}
+                                    Metoda: {{order.method}}
+                                    Prezent: {{order.gift}}
+                                </pre>
+                            </div>
+                        </div>                    
                 </main>                
                 
             </div>
@@ -50,9 +129,19 @@
             var APP_LOG_LIFECYCLE_EVENTS =true;
                 var webstore = new Vue({
                     el: '#app',
-                    data: {
-                        showProduct: true,
+                    data: {                        
                         sitename: 'Skład dla zwierzaków::Vue.js',
+                        showProduct: true,
+                        order: {
+                            firstName: "",
+                            lastName: "",
+                            address: "",
+                            city: "",
+                            zip: "",
+                            state: "",
+                            method: "domowy",
+                            gift: false
+                        },
                         product: {
                             id: 1001,
                             title: "Karma dla kota 10 kg",
@@ -91,6 +180,9 @@
                         }
                     },
                     methods: {
+                        submitForm() {
+                            alert("wysłano formularz!");
+                        },
                         addToCart: function() {
                             this.cart.push(this.product.id);
                         },
@@ -139,9 +231,6 @@
                         }
                     }
                 });   
-
-                
                 </script>
-
         </body>
 </html>
