@@ -39,36 +39,36 @@
                                 <p class="price">
                                     {{ product.price | formatPrice }}
                                 </p>
-                                <button class="default btn btn-primary" v-on:click="addToCart" v-if="canAddToCart">Dodaj do koszyka</button> 
-                                <div v-else>
-                                <button class="disabled">Dodaj do koszyka</button> 
-                                <p class="text-danger font-italic">stan magazynowy wyczerpany</p>
-                                </div>
+                                <button class="default btn btn-primary" v-on:click="addToCart" v-if="canAddToCart">Dodaj do koszyka</button>                                 
+                                <button class="disabled btn btn-primary" v-else>Dodaj do koszyka</button> 
+                                <span class="inventory-message" v-if="product.availableInventory - cartItemCount === 0">Brak towaru!</span>
+                                <span class="inventory-message" v-else-if="product.availableInventory - cartItemCount < 5"> Zostało tylko {{product.availableInventory - cartItemCount}}!</span>
+                                <span class="inventory-message" v-else>Kupuj teraz!</span>                                
                             </div>                
                         </div>
                         <div v-else>
                             <div class="col-md-6">
                                 <strong>Imię:</strong>
-                                <input v-model="order.firstName" class="form-control"/>
+                                <input v-model.trim="order.firstName" class="form-control"/>
                             </div>
                             <div class="col-md-6">
                                 <strong>Nazwisko:</strong>
-                                <input v-model="order.lastName" class="form-control"/>
+                                <input v-model.trim="order.lastName" class="form-control"/>
                             </div>                            
                             <div class="form-group">
                                 <div class="col-md-12">
                                     <strong>Adres:</strong>
                                 </div>
                                 <div class="col-md-12">
-                                    <input v-model="order.address" class="form-control" />
+                                    <input v-model.trim="order.address" class="form-control" />
                                 </div>
-                            </>
+                            </div>
                             <div class="form-group">
                                 <div class="col-md-12">
                                     <strong>Miejscowość:</strong>
                                 </div>
                                 <div class="col-md-12">
-                                    <input v-model="order.city" class="form-control" />
+                                    <input v-model.trim="order.city" class="form-control" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -76,30 +76,30 @@
                                     <strong>Województwo:</strong>
                                     <select v-model="order.state" class="form-control">
                                         <option disabled value="">Województwo</option>
-                                        <option>DL</option>
-                                        <option>KP</option>
-                                        <option>LB</option>
-                                        <option>LU</option>
+                                        <option v-for="(state, key) in states" v-bind:value="state">{{ key }}</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-md-6 col-md-offset-4">
                                     <strong>Kod pocztowy:</strong>
-                                    <input v-model="order.zip" class="form-control"/>
+                                    <input v-model.number="order.zip" class="form-control"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-md-6 boxes">
-                                    <input type="checkbox" id="gift" value="true" v-model="order.gift">
+                                    <input type="checkbox" id="gift"
+                                    v-bind:true-value="order.sendGift"
+                                    v-bind:false-value="order.dontSendGift"
+                                    v-model="order.gift">
                                     <label for="gift">Wysłać jako prezent?</label>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-md-6 boxes">
-                                    <input type="radio" id="home" value="domowy" v-model="order.method">
+                                    <input type="radio" id="home" v-bind:value="order.home" v-model="order.method">
                                     <label for="home">Domowy</label>
-                                    <input type="radio" id="business" value="firmowy" v-model="order.method">
+                                    <input type="radio" id="business" v-bind:value="order.business" v-model="order.method">
                                     <label for="business">Firmowy</label>
                                 </div>
                             </div>
@@ -139,8 +139,12 @@
                             city: "",
                             zip: "",
                             state: "",
-                            method: "domowy",
-                            gift: false
+                            method: "Adres domowy",
+                            business: "Adres firmowy",
+                            home: "Adres domowy",
+                            gift: "Nie wysyłaj jako prezentu",
+                            sendGift: "Wyślij jako prezent",
+                            dontSendGift: "Nie wysyłaj jako prezentu"
                         },
                         product: {
                             id: 1001,
@@ -148,7 +152,15 @@
                             description: "10-kilogramowe opakowanie pysznej karmy organicznej, której żaden kot się nie <em>oprze</em>!",
                             price: 6700,
                             image: 'assets/images/product-fullsize.png',
-                            availableInventory: 5
+                            availableInventory: 8
+                        },
+                        states: {
+                            DL: 'dolnośląskie',
+                            KP: 'kujawsko-pomorskie',
+                            LB: 'lubelskie',
+                            LU: 'lubuskie', 
+                            OP: 'opolskie',
+                            SL: 'śląskie',                           
                         },
                         cart: []
                     },
