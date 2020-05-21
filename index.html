@@ -43,7 +43,10 @@
                                 <button class="disabled btn btn-primary" v-else>Dodaj do koszyka</button> 
                                 <span class="inventory-message" v-if="product.availableInventory - cartItemCount === 0">Brak towaru!</span>
                                 <span class="inventory-message" v-else-if="product.availableInventory - cartItemCount < 5"> Zostało tylko {{product.availableInventory - cartItemCount}}!</span>
-                                <span class="inventory-message" v-else>Kupuj teraz!</span>                                
+                                <span class="inventory-message" v-else>Kupuj teraz!</span>
+                                <div class="rating">
+                                    <span v-bind:class="{'rating-active' : checkRating(n)}" v-for="n in 5">✩</span>
+                                </div>                             
                             </div>                
                         </div>
                         <div v-else>
@@ -152,7 +155,8 @@
                             description: "10-kilogramowe opakowanie pysznej karmy organicznej, której żaden kot się nie <em>oprze</em>!",
                             price: 6700,
                             image: 'assets/images/product-fullsize.png',
-                            availableInventory: 8
+                            availableInventory: 8,
+                            rating: 3
                         },
                         states: {
                             DL: 'dolnośląskie',
@@ -192,6 +196,9 @@
                         }
                     },
                     methods: {
+                        checkRating(n) {
+                            return this.product.rating - n >= 0;
+                        },
                         submitForm() {
                             alert("wysłano formularz!");
                         },
